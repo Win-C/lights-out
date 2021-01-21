@@ -32,18 +32,14 @@ function Board({ nrows = 3, ncols = 3, chanceLightStartsOn }) {
   console.log("board", board);
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
-    let initialBoard = [];
+    let initialBoard = new Array(nrows).fill([]);
 
-    // TODO: refactor
-    for (let i = 0; i < nrows; i++) {
-      const row = [];
-      for (let j = 0; j < ncols; j++) {
-        const cell = Math.floor(Math.random() * 2) === 0;
-        row.push(cell);
-      }
-      initialBoard.push(row);
-    }
-    console.log("initboard", initialBoard);
+    initialBoard.map( r => {
+      const cell = Math.floor(Math.random() * 2) === 0;
+      r.push(cell);
+      return r;
+    });
+
     return initialBoard;
   }
 
@@ -52,7 +48,8 @@ function Board({ nrows = 3, ncols = 3, chanceLightStartsOn }) {
     return board.every(r => r.every(c => c === false));
   }
 
-  /* takes x and y coordinates of the cell, flip the cell and cells around it and sets Board */
+  /** takes x and y coordinates of the cell, flip the cell and 
+      cells around it and sets Board */
   function flipCellsAround([y, x]) {
     setBoard(oldBoard => {
 
@@ -64,44 +61,34 @@ function Board({ nrows = 3, ncols = 3, chanceLightStartsOn }) {
         }
       };
 
-      // TODO: Make a (deep) copy of the oldBoard
       const boardCopy = oldBoard.map(r => [...r]);
-      // TODO: in the copy, flip this cell and the cells around it
+
       flipCell(y, x, boardCopy);
-      console.log("self", boardCopy);
       flipCell(y + 1, x, boardCopy);
-      console.log("self", boardCopy);
       flipCell(y - 1, x, boardCopy);
-      console.log("self", boardCopy);
       flipCell(y, x + 1, boardCopy);
-      console.log("self", boardCopy);
       flipCell(y, x - 1, boardCopy);
-      console.log("self", boardCopy);
-      // TODO: return the copy
+
       return boardCopy;
     });
   }
 
   // if the game is won, just show a winning msg & render nothing else
   if (hasWon()) return <div className="Board"> <p className="Board-win-msg"> You won! </p></div>
-  // TODO
 
   // make table board
   return (<div className="Board">
     <h3 className="Board-title"> lights out</h3>
     <div className="Board-container" style={{height: `${nrows*110}px`, width: `${ncols*110}px`}}>
-      {board.map((r, xidx) => (
-        r.map((c, yidx) => (
+      {board.map((r, yidx) => (
+        r.map((c, xidx) => (
           <Cell
             isLit={c}
             flipCellsAroundMe={() => { flipCellsAround([yidx, xidx]) }} />)
         )))}
     </div>
-
   </div>)
 
-  // Cell({ flipCellsAroundMe, isLit })
-  // TODO
 }
 
 export default Board;
