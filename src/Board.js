@@ -27,19 +27,22 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows = 3, ncols = 3, chanceLightStartsOn = 0.5 }) {
+function Board({ nrows = 5, ncols = 5, chanceLightStartsOn = 0.5 }) {
   // Note: don't need to invoke functions let be the callback
   const [board, setBoard] = useState(createBoard);
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
-    let initialBoard = new Array(nrows).fill([]);
+    let initialBoard = [];
 
-    initialBoard.map( r => {
-      const cell = Math.random() > chanceLightStartsOn;
-      r.push(cell);
-      return r;
-    });
+    for (let i=0; i<nrows; i++){
+      let row = [];
+      for (let j=0; j<ncols; j++){
+        const cell = Math.random() > chanceLightStartsOn;
+        row.push(cell);
+      }
+      initialBoard.push(row);
+    }
 
     return initialBoard;
   }
