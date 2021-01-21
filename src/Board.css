@@ -1,3 +1,9 @@
 .Board {
   margin: 0 auto;
+  justify-content: center;
+}
+.Board-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
