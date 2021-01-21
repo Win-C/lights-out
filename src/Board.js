@@ -27,15 +27,16 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows = 3, ncols = 3, chanceLightStartsOn }) {
-  const [board, setBoard] = useState(createBoard());
-  console.log("board", board);
+function Board({ nrows = 3, ncols = 3, chanceLightStartsOn = 0.5 }) {
+  // Note: don't need to invoke functions let be the callback
+  const [board, setBoard] = useState(createBoard);
+
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
     let initialBoard = new Array(nrows).fill([]);
 
     initialBoard.map( r => {
-      const cell = Math.floor(Math.random() * 2) === 0;
+      const cell = Math.random() > chanceLightStartsOn;
       r.push(cell);
       return r;
     });
@@ -74,21 +75,40 @@ function Board({ nrows = 3, ncols = 3, chanceLightStartsOn }) {
   }
 
   // if the game is won, just show a winning msg & render nothing else
-  if (hasWon()) return <div className="Board"> <p className="Board-win-msg"> You won! </p></div>
+  if (hasWon()) {
+    return (
+      <div className="Board"> 
+        <p className="Board-win-msg"> 
+          You won! 
+        </p>
+      </div>
+      );
+  }
 
   // make table board
-  return (<div className="Board">
-    <h3 className="Board-title"> lights out</h3>
-    <div className="Board-container" style={{height: `${nrows*110}px`, width: `${ncols*110}px`}}>
-      {board.map((r, yidx) => (
-        r.map((c, xidx) => (
-          <Cell
+  const table = (
+    <table className="Board-container">
+        <tbody>
+        {board.map((r, yidx) => (
+          <tr key={`${yidx}`}>
+          {r.map((c, xidx) => (
+            <Cell
+            key={`${yidx}-${xidx}`}
             isLit={c}
             flipCellsAroundMe={() => { flipCellsAround([yidx, xidx]) }} />)
-        )))}
-    </div>
-  </div>)
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 
+  return (
+    <div className="Board">
+      <h3 className="Board-title"> lights out</h3>
+      {table}
+    </div>
+  );
 }
 
 export default Board;
